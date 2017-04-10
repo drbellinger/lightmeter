@@ -31,7 +31,7 @@
         android:background="@color/control_background"
         android:paddingBottom="@dimen/margin_medium"
         android:paddingLeft="@dimen/margin_medium"
-        android:paddingRight="@dimen/margin_medium"
+        android:paddingRight="@dimen/margin_small"
         android:paddingTop="@dimen/margin_medium"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true">
@@ -40,7 +40,7 @@
             android:id="@+id/light_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Light reading unavailable"
+            android:text="@string/no_light_sensor"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/angle_image" />
 
@@ -48,14 +48,9 @@
             android:id="@+id/accelerometer_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Accelerometer reading unavailable"
+            android:text="@string/no_tilt_sensor"
             android:layout_below="@+id/light_label"
             android:layout_toEndOf="@+id/angle_image" />
-
-        <TextView
-            android:id="@+id/datetime_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
         <ImageView
             android:id="@+id/angle_image"
@@ -63,7 +58,18 @@
             android:layout_height="wrap_content"
             android:src="@drawable/angle_indicator"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/datetime_label" />
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:id="@+id/previous"
+            android:contentDescription="@string/previous"
+            android:src="@drawable/no_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:visibility="visible"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 

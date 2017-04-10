@@ -2,4 +2,8 @@
     <string name="app_name">Plant Light Meter</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="request_permission">This sample needs camera permission.</string>
+    <string name="no_light_sensor">Light reading unavailable</string>
+    <string name="no_tilt_sensor">Accelerometer offline</string>
+    <string name="previous">Previous Image</string>
+    <string name="gallery_empty">Nothing to see here</string>
 </resources>

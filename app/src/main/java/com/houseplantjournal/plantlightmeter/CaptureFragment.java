@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -77,7 +77,6 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
     TextView accelerometerTextView;
     TextView lightTextView;
     ImageView angleImageView;
-    TextView dateTimeTextView;
 
     private String mCameraId;
     private AutoFitTextureView mTextureView;
@@ -111,6 +110,7 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
     private Handler mBackgroundHandler;
     private ImageReader mImageReader;
     private File mFile;
+    private ImageView galleryButton;
 
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
@@ -119,7 +119,7 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
     private int mSensorOrientation;
 
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
-
+    private OnGallerySelectedListener galleryCallback;
 
     public static CaptureFragment newInstance() {
         return new CaptureFragment();
@@ -134,18 +134,16 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
 
-        view.findViewById(R.id.texture).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        view.findViewById(R.id.texture).setOnClickListener(this);
 
         accelerometerTextView = (TextView) view.findViewById(R.id.accelerometer_label);
         lightTextView = (TextView) view.findViewById(R.id.light_label);
         angleImageView = (ImageView) view.findViewById(R.id.angle_image);
-        dateTimeTextView = (TextView) view.findViewById(R.id.datetime_label);
 
-        Calendar calendar = Calendar.getInstance();
+/*        Calendar calendar = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(calendar.getTime());
-        dateTimeTextView.setText(formattedDate);
+        String formattedDate = df.format(calendar.getTime());*/
 
         sensorManager = (SensorManager) this.getActivity().getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -153,12 +151,38 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
 
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         registerSensorIfAvailable(lightSensor);
+
+        galleryButton = (ImageView) view.findViewById(R.id.previous);
+        galleryButton.setOnClickListener(this);
+
+        try {
+            galleryCallback = (OnGallerySelectedListener) getActivity();
+        }
+        catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement OnGallerySelectedListener");
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+            case R.id.texture: {
+                takePicture();
+                break;
+            }
+            case R.id.previous: {
+                galleryCallback.onGallerySelected();
+                break;
+            }
+        }
     }
 
     @Override
@@ -233,17 +257,6 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
 
     }
 
-    @Override
-    public void onClick(View view) {
-
-        switch (view.getId()) {
-            case R.id.texture: {
-                takePicture();
-                break;
-            }
-        }
-    }
-
     private void registerSensorIfAvailable(Sensor sensor) {
 
         if(sensor != null) {
@@ -254,10 +267,8 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
         }
     }
     private void requestCameraPermission() {
-
-
-        FragmentCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+        requestPermissions(new String[]{Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
     }
 
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener
@@ -436,7 +447,7 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    @Override
+/*    @Override
     public void onRequestPermissionsResult(int requestCode,
            @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -449,7 +460,7 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
         else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
+    }*/
 
 /*    public static class ConfirmationDialog extends DialogFragment {
 
@@ -574,10 +585,10 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
         catch (CameraAccessException e) {
             e.printStackTrace();
         }
-        catch (NullPointerException e) {
+/*        catch (NullPointerException e) {
             ErrorDialog.newInstance(getString(R.string.camera_error))
                     .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-        }
+        }*/
     }
 
     private void openCamera(int width, int height) {
@@ -861,4 +872,7 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
 
     }
 
+    public interface OnGallerySelectedListener {
+        void onGallerySelected();
+    }
 }
