@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -870,6 +873,35 @@ public class CaptureFragment extends Fragment implements View.OnClickListener,
                     }).create();
         }
 
+    }
+
+    public Bitmap watermarkImage(Bitmap src, String watermark, Point location,
+                                 int color, int alpha, int size, boolean underline) {
+
+        //get source image width and height
+        int w = src.getWidth();
+        int h = src.getHeight();
+
+        Bitmap result = Bitmap.createBitmap(w, h, src.getConfig());
+        //create canvas object
+        Canvas canvas = new Canvas(result);
+        //draw bitmap on canvas
+        canvas.drawBitmap(src, 0, 0, null);
+        //create paint object
+        Paint paint = new Paint();
+        //apply color
+        paint.setColor(color);
+        //set transparency
+        paint.setAlpha(alpha);
+        //set text size
+        paint.setTextSize(size);
+        paint.setAntiAlias(true);
+        //set should be underlined or not
+        paint.setUnderlineText(underline);
+        //draw text on given location
+        canvas.drawText(watermark, location.x, location.y, paint);
+
+        return result;
     }
 
     public interface OnGallerySelectedListener {
